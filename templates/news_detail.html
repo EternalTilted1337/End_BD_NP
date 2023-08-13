@@ -1,0 +1,7 @@
+{% extends 'default.html' %}
+
+{% block content %}
+  <h1>{{ article.title|censor }}</h1>
+  <p>{{ article.date|date:"d.m.Y" }}</p>
+  <p>{{ article.text|censor }}</p>
+{% endblock %}

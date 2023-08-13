@@ -54,5 +54,6 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['created_at']

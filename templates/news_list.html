@@ -1,0 +1,43 @@
+{% extends 'default.html' %}
+<!--{% load custom_filters %} -->
+<!--{% load custom_tags %} -->
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+   <h1>Все новости</h1>
+    <hr>
+    <h2>{{ post.title }}</h2>
+   <h3>{{ time_now|date:'M d Y' }}</h3>
+   <h3> {{ next_sale|default_if_none:"Чуть позже сообщим о новостях!" }} </h3>
+   {% if object_list %}
+       <table> <!-- Начинаем описывать таблицу -->
+           <tr> <!-- Добавляем строку -->
+               <td>Автор</td>
+               <td>Титульник</td>
+               <td>Текс</td>
+               <td>Дата поста</td>
+               <td>Категории</td>
+               <td>Рейтинг</td>
+           </tr> <!-- Не забываем закрыть HTML-тег строки -->
+
+           {% for object in object_list %}
+
+           <!-- Цикл для перебора новостей -->
+               <tr>
+                   <td>{{ object_list.author}}</td>
+                   <td>{{ object.title }}</td>
+                   <td>{{ object.text|truncatechars:20}}</td>
+                   <td>{{ object_list.date}}</td>
+                   <td>{{ object_list.category }}</td>
+                   <td>{{ object.rating|currency }}</td>
+               </tr>
+           {% endfor %}
+       </table> <!-- ... и таблицы -->
+   {% else %}
+       <h2>Новостей нет!</h2>
+   {% endif %}
+{% endblock %}
+</hr>
+
