@@ -9,19 +9,21 @@ class NewsListView(ListView):
     template_name = 'news_list.html'
     context_object_name = 'object'
     queryset = Post.objects.order_by('-id')
-    paginate_by = 10 # вот так мы можем указать количество записей на странице
+    paginate_by = 1 # вот так мы можем указать количество записей на странице
 
-def get_queryset(self):
-   # Получаем обычный запрос
-   queryset = super().get_queryset()
-   # Используем наш класс фильтрации.
-   # self.request.GET содержит объект QueryDict, который мы рассматривали
-   # в этом юните ранее.
-   # Сохраняем нашу фильтрацию в объекте класса,
-   # чтобы потом добавить в контекст и использовать в шаблоне.
-   self.filterset = Post(self.request.GET, queryset)
-   # Возвращаем из функции отфильтрованный список товаров
-   return self.filterset.qs
+
+
+def get_queryset(cls):
+    # Получаем обычный запрос
+    queryset = super().get_queryset()
+    # Используем наш класс фильтрации.
+    # self.request.GET содержит объект QueryDict, который мы рассматривали
+    # в этом юните ранее.
+    # Сохраняем нашу фильтрацию в объекте класса,
+    # чтобы потом добавить в контекст и использовать в шаблоне.
+    cls.filterset = Post(cls.request.GET, queryset)
+    # Возвращаем из функции отфильтрованный список объектов
+    return cls.filterset.qs
 
 
 def get_context_data(self, **kwargs):
@@ -29,6 +31,7 @@ def get_context_data(self, **kwargs):
     # Добавляем в контекст объект фильтрации.
     context['filterset'] = self.filterset
     return context
+
 
 
 class NewsDetailView(DetailView):

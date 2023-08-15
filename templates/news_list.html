@@ -1,5 +1,5 @@
 {% extends 'default.html' %}
-{% load custom_filters %}-->
+<!--{% load custom_filters %}-->
 <!--{% load custom_tags %} -->
 {% block title %}
 Posts
@@ -12,7 +12,9 @@ Posts
        {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
        {{ filterset.form.as_p }}
        {# Добавим кнопку отправки данных формы #}
+       <input type="text" name="asd"/>
        <input type="submit" value="Найти" />
+
    </form>
     <hr>
     <h2>{{ post.title }}</h2>
@@ -45,23 +47,17 @@ Posts
    {% else %}
        <h2>Новостей нет!</h2>
    {% endif %}
-   {# Добавляем пагинацию на страницу #}
 
-   {# Информация о предыдущих страницах #}
    {% if page_obj.has_previous %}
-
-  <a href="?page={{ page_obj.previous_page_number }}">Prev</a>
-
-  {% if page_obj.previous_page_number != 1 %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
            ...
-           <a href="?page={{ page_obj.next_page_number }}">Next</a>
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
        {% endif %}
    {% endif %}
 
-   {# Информация о текущей странице #}
    {{ page_obj.number }}
 
-   {# Информация о следующих страницах #}
    {% if page_obj.has_next %}
        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
        {% if paginator.num_pages != page_obj.next_page_number %}
@@ -70,5 +66,5 @@ Posts
        {% endif %}
    {% endif %}
 {% endblock %}
-</hr>
+
 
