@@ -17,9 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from BD_NP.views import NewsDetailView, NewsListView, news_list
+from BD_NP.views import NewsCreateView, NewsUpdateView, NewsDeleteView
+from BD_NP.views import ArticleCreateView, ArticleUpdateView, ArticleDeleteView
 
 urlpatterns = [
-    path('news', NewsListView.as_view()),
+    path('news/', NewsListView.as_view()), #работает
     path('news/<int:pk>/', NewsDetailView.as_view()),
+    path('news/create/', NewsCreateView.as_view(), name='news_create'), #news_create.html | работает
+    path('news/<int:pk>/edit/', NewsUpdateView.as_view(), name='news_edit'),#news_edit.html | работает
+    path('news/<int:pk>/delete/', NewsDeleteView.as_view(), name='news_delete'), #news_delete.html | работает
+#Articles все работают
+    path('articles/create/', ArticleCreateView.as_view(), name='article_create'), #articles/create.html
+    path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article_edit'),#article_edit.html
+    path('articles/<int:pk>/delete/', ArticleDeleteView.as_view(), name='article_delete'), #article_delete.html
 ]
 

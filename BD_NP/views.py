@@ -3,6 +3,7 @@ from BD_NP.models import Post
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from datetime import datetime
+from django.views.generic import CreateView, DeleteView, UpdateView
 
 class NewsListView(ListView):
     model = Post
@@ -38,7 +39,7 @@ class NewsDetailView(DetailView):
     model = Post
     template_name = 'news_detail.html'
     context_object_name = 'news_detail'
-    pk_url_kwarg = 'id'
+    pk_url_kwarg = 'pk'
 
 
 def news_list(request):
@@ -50,6 +51,57 @@ def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
     context['post'] = self.object
     return context
+###################################################################################################
+class NewsCreateView(CreateView): #Создание новости
+    model = Post
+    fields = ['title', 'text']
+    template_name = 'news/create.html'
+
+
+class NewsUpdateView(UpdateView): #Обновление новостей
+  model = Post
+  fields = ['title', 'text']
+  template_name = 'news_edit.html'
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['content_type'] = 'news'
+    return context
+
+
+class NewsDeleteView(DeleteView): #Удаление новостей
+    model = Post
+    template_name = 'news_delete.html'
+
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['content_type'] = 'news'
+    return context
+
+class PostCreateView(CreateView):
+  model = Post
+  fields = ['title', 'text']
+
+
+class ArticleUpdateView(UpdateView): #Обновление статьи
+    model = Post
+    fields = ['title', 'text']
+    template_name = 'article_edit.html'
+
+class ArticleCreateView(PostCreateView): #Создание статьи
+    temoplate_name = 'articles/create.html'
+
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['content_type'] = 'article'
+    return context
+
+class ArticleDeleteView(DeleteView): #Удаление статьи
+    model = Post
+    template_name = 'article_delete.html'
+
+
+
 
 
 
