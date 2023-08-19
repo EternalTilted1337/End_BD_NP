@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <h1>{{ news_detail.title}}</h1>
+  <h1>{{ news_detail.title}}</h1> <!-- убран |censor-->
   <p>{{ news_detail.date|date:"d.m.Y" }}</p>
-  <p>{{ news_detail.text }}</p>
+  <p>{{ news_detail.text }}</p> <!-- убран |censor-->
 {% endblock %}

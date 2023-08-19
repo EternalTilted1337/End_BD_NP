@@ -4,6 +4,8 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import render
 from datetime import datetime
 from django.views.generic import CreateView, DeleteView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 class NewsListView(ListView):
     model = Post
@@ -14,27 +16,30 @@ class NewsListView(ListView):
 
 
 
-def get_queryset(cls):
-    # Получаем обычный запрос
-    queryset = super().get_queryset()
-    # Используем наш класс фильтрации.
-    # self.request.GET содержит объект QueryDict, который мы рассматривали
-    # в этом юните ранее.
-    # Сохраняем нашу фильтрацию в объекте класса,
-    # чтобы потом добавить в контекст и использовать в шаблоне.
-    cls.filterset = Post(cls.request.GET, queryset)
-    # Возвращаем из функции отфильтрованный список объектов
-    return cls.filterset.qs
+    def get_queryset(cls):
+        # Получаем обычный запрос
+        queryset = super().get_queryset()
+        # Используем наш класс фильтрации.
+        # self.request.GET содержит объект QueryDict, который мы рассматривали
+        # в этом юните ранее.
+        # Сохраняем нашу фильтрацию в объекте класса,
+        # чтобы потом добавить в контекст и использовать в шаблоне.
+        cls.filterset = Post(cls.request.GET, queryset)
+        # Возвращаем из функции отфильтрованный список объектов
+        return cls.filterset.qs
 
 
-def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    # Добавляем в контекст объект фильтрации.
-    context['filterset'] = self.filterset
-    return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Добавляем в контекст объект фильтрации.
+        context['filterset'] = self.filterset
+        return context
 
 
-
+def news_list(request):
+    articles = Post.objects.order_by('-date')
+    total_news_count = articles.count()
+    return render(request, 'news_list.html', {'articles': articles, 'total_news_count': total_news_count})
 class NewsDetailView(DetailView):
     model = Post
     template_name = 'news_detail.html'
@@ -42,16 +47,13 @@ class NewsDetailView(DetailView):
     pk_url_kwarg = 'pk'
 
 
-def news_list(request):
-    articles = Post.objects.order_by('-date')
-    total_news_count = articles.count()
-    return render(request, 'news_list.html', {'articles': articles, 'total_news_count': total_news_count})
 
-def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['post'] = self.object
-    return context
-###################################################################################################
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = self.object
+        return context
+    ###################################################################################################
 class NewsCreateView(CreateView): #Создание новости
     model = Post
     fields = ['title', 'text']
@@ -73,10 +75,10 @@ class NewsDeleteView(DeleteView): #Удаление новостей
     model = Post
     template_name = 'news_delete.html'
 
-def get_context_data(self, **kwargs):
-    context = super().get_context_data(**kwargs)
-    context['content_type'] = 'news'
-    return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['content_type'] = 'news'
+        return context
 
 class PostCreateView(CreateView):
   model = Post
@@ -101,7 +103,10 @@ class ArticleDeleteView(DeleteView): #Удаление статьи
     template_name = 'article_delete.html'
 
 
+class PostEditView(LoginRequiredMixin, UpdateView):
+  model = Post
+  fields = ['title', 'content']
+  template_name = 'edit_post.html'
 
-
-
-
+  def get_object(self):
+    return Post.objects.get(pk=self.kwargs['pk'])
