@@ -1,5 +1,5 @@
 from django_filters import FilterSet
-from .models import Post
+from BD_NP.models import Post
 
 # Создаем свой набор фильтров для модели Product.
 # FilterSet, который мы наследуем,

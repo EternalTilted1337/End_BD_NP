@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -53,6 +52,10 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 SITE_ID = 1
+
+LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = 'news_list'
+
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_EMAIL_REQUIRED = True
 
@@ -149,3 +152,15 @@ STATICFILES_DIRS = [
   os.path.join(BASE_DIR, 'MyApp/static')
 
 ]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}

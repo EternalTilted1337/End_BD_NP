@@ -5,34 +5,33 @@ from django.shortcuts import render
 from datetime import datetime
 from django.views.generic import CreateView, DeleteView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.db.models import Q
+from django.contrib.auth.models import Group
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 class NewsListView(ListView):
     model = Post
     template_name = 'news_list.html'
     context_object_name = 'object'
     queryset = Post.objects.order_by('-id')
-    paginate_by = 1 # вот так мы можем указать количество записей на странице
+    paginate_by = 1# вот так мы можем указать количество записей на странице
 
-
-
-    def get_queryset(cls):
-        # Получаем обычный запрос
+    def get_queryset(self):
         queryset = super().get_queryset()
-        # Используем наш класс фильтрации.
-        # self.request.GET содержит объект QueryDict, который мы рассматривали
-        # в этом юните ранее.
-        # Сохраняем нашу фильтрацию в объекте класса,
-        # чтобы потом добавить в контекст и использовать в шаблоне.
-        cls.filterset = Post(cls.request.GET, queryset)
-        # Возвращаем из функции отфильтрованный список объектов
-        return cls.filterset.qs
+        filter_param = self.request.GET.get('filter')
 
+        if filter_param:
+            queryset = queryset.filter(
+                Q(title__icontains=filter_param) |
+                Q(text__icontains=filter_param)
+            )
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Добавляем в контекст объект фильтрации.
-        context['filterset'] = self.filterset
+        context['filter'] = self.request.GET.get('filter')
         return context
 
 
@@ -40,6 +39,7 @@ def news_list(request):
     articles = Post.objects.order_by('-date')
     total_news_count = articles.count()
     return render(request, 'news_list.html', {'articles': articles, 'total_news_count': total_news_count})
+
 class NewsDetailView(DetailView):
     model = Post
     template_name = 'news_detail.html'
@@ -103,10 +103,16 @@ class ArticleDeleteView(DeleteView): #Удаление статьи
     template_name = 'article_delete.html'
 
 
-class PostEditView(LoginRequiredMixin, UpdateView):
+class ProfileEditView(LoginRequiredMixin, UpdateView):
   model = Post
-  fields = ['title', 'content']
-  template_name = 'edit_post.html'
+  fields = ['name', 'avatar']
+  template_name = 'edit_profile.html'
 
   def get_object(self):
-    return Post.objects.get(pk=self.kwargs['pk'])
+    return self.request.user.profile
+
+@receiver(post_save, sender=User)
+def user_saved(sender, instance, created, **kwargs):
+    if created:
+        common_group = Group.objects.get(name='common')
+        instance.groups.add(common_group)

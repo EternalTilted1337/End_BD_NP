@@ -32,5 +32,6 @@ urlpatterns = [
     path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article_edit'),#article_edit.html
     path('articles/<int:pk>/delete/', ArticleDeleteView.as_view(), name='article_delete'), #article_delete.html
     path('accounts/', include('allauth.urls')),
+    path(('admin/'), admin.site.urls)
 ]
 
