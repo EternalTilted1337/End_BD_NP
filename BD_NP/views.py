@@ -16,7 +16,7 @@ class NewsListView(ListView):
     template_name = 'news_list.html'
     context_object_name = 'object'
     queryset = Post.objects.order_by('-id')
-    paginate_by = 1# вот так мы можем указать количество записей на странице
+    paginate_by = 1 # вот так мы можем указать количество записей на странице
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -111,8 +111,9 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
   def get_object(self):
     return self.request.user.profile
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User) #
 def user_saved(sender, instance, created, **kwargs):
     if created:
         common_group = Group.objects.get(name='common')
         instance.groups.add(common_group)
+#геге

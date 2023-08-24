@@ -21,6 +21,7 @@ from BD_NP.views import NewsCreateView, NewsUpdateView, NewsDeleteView
 from BD_NP.views import ArticleCreateView, ArticleUpdateView, ArticleDeleteView
 from django.urls import include
 
+
 urlpatterns = [
     path('news/', NewsListView.as_view()), #работает
     path('news/<int:pk>/', NewsDetailView.as_view()),
@@ -32,6 +33,9 @@ urlpatterns = [
     path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article_edit'),#article_edit.html
     path('articles/<int:pk>/delete/', ArticleDeleteView.as_view(), name='article_delete'), #article_delete.html
     path('accounts/', include('allauth.urls')),
-    path(('admin/'), admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('', include('protect.urls')),  #Вот эта шляпа
+    path('sign/', include('sign.urls')), #Вот эта шляпа
+    path('accounts/', include('allauth.urls')), #Вот эта шляпа
 ]
 
